@@ -4,7 +4,8 @@
 		<script src='src/js/three.min.js'></script>
 		<script src='src/js/leap.js'></script>
 	</head>
-	<body onResize="adjust_window()">
+	<body onResize="adjust_window()" bgcolor="black">
+		<h1 id ="score" style="color:white"></h1>
 	</body>
 	<script>
 		//CONSTANTS
@@ -15,6 +16,8 @@
 		var BALLRAD=10
 		var MAX_ACCELERATION=1
 		//Variables
+		var score=0
+		var hiscore=0
 		var objlist = []
 		paddles=[]
 		var scene=new THREE.Scene();
@@ -34,7 +37,12 @@
 		}
 		//Utilities
 		function randomize_velocity(){
-			return {x:Math.random()*4-1,y:Math.random()*4-1,z:Math.random()*2-1}
+			if (score>hiscore)
+			{
+				hiscore=score
+			}
+			score=0
+			return {x:Math.random()*2-1,y:Math.random()*2-1,z:Math.random()*2-1}
 		}
 		function reset(pad){
 		if (pad.mesh.position.x!=100)
@@ -231,6 +239,7 @@
 					if (pxpad.mesh.position.y-PADWIDTH/2<this.position.y+BALLRAD && pxpad.mesh.position.y+PADWIDTH/2>this.position.y -BALLRAD && pxpad.mesh.position.z-PADWIDTH/2<this.position.z+BALLRAD && pxpad.mesh.position.z+PADWIDTH/2>this.position.z -BALLRAD){
 						this.velocity.x*=-1
 						this.lasthit=player1
+						score+=1
 					}
 					else{
 						player1.score-=1
@@ -247,6 +256,7 @@
 					if (nxpad.mesh.position.y-PADWIDTH/2<this.position.y+BALLRAD && nxpad.mesh.position.y+PADWIDTH/2>this.position.y -BALLRAD && nxpad.mesh.position.z-PADWIDTH/2<this.position.z+BALLRAD && nxpad.mesh.position.z+PADWIDTH/2>this.position.z -BALLRAD){
 						this.velocity.x*=-1
 						this.lasthit=player2
+						score+=1
 					}
 					else{
 						player2.score-=1
@@ -263,6 +273,7 @@
 					if (pypad.mesh.position.x-PADWIDTH/2<this.position.x+BALLRAD && pypad.mesh.position.x+PADWIDTH/2>this.position.x -BALLRAD && pypad.mesh.position.z-PADWIDTH/2<this.position.z+BALLRAD && pypad.mesh.position.z+PADWIDTH/2>this.position.z -BALLRAD){
 						this.velocity.y*=-1
 						this.lasthit=player2
+						score+=1
 					}
 					else{
 						player2.score-=1
@@ -279,6 +290,7 @@
 					if (nypad.mesh.position.x-PADWIDTH/2<this.position.x+BALLRAD && nypad.mesh.position.x+PADWIDTH/2>this.position.x -BALLRAD && nypad.mesh.position.z-PADWIDTH/2<this.position.z+BALLRAD && nypad.mesh.position.z+PADWIDTH/2>this.position.z -BALLRAD){
 						this.velocity.y*=-1
 						this.lasthit=player3
+						score+=1
 					}
 					else{
 						player3.score-=1
@@ -295,6 +307,7 @@
 					if (nzpad.mesh.position.y-PADWIDTH/2<this.position.y+BALLRAD && nzpad.mesh.position.y+PADWIDTH/2>this.position.y -BALLRAD && nzpad.mesh.position.x-PADWIDTH/2<this.position.x+BALLRAD && nzpad.mesh.position.x+PADWIDTH/2>this.position.x -BALLRAD){
 						this.velocity.z*=-1
 						this.lasthit=player3
+						score+=1
 					}
 					else{
 						player3.score-=1
@@ -311,6 +324,7 @@
 					if (pzpad.mesh.position.y-PADWIDTH/2<this.position.y+BALLRAD && pzpad.mesh.position.y+PADWIDTH/2>this.position.y -BALLRAD && pzpad.mesh.position.x-PADWIDTH/2<this.position.x+BALLRAD && pzpad.mesh.position.x+PADWIDTH/2>this.position.x -BALLRAD){
 						this.velocity.z*=-1
 						this.lasthit=player1
+						score+=1
 					}
 					else{
 						player1.score-=1
@@ -381,6 +395,59 @@
 		ball=new Ball()
 		ball.velocity=randomize_velocity()
 
+		var HELPERS=true
+		if (HELPERS)
+		{
+			pxh=new Ball()
+			pxh.position.x=GAMEOFFSET
+			pxh.mesh.material.color={r:.25,g:.25,b:0}
+			pxh.update=function(){
+				this.position.y=ball.position.y
+				this.position.z=ball.position.z
+				this.mesh.position=this.position
+			}
+			nxh=new Ball()
+			nxh.position.x=-GAMEOFFSET
+			nxh.mesh.material.color={r:.25,g:.25,b:0}
+			nxh.update=function(){
+				this.position.y=ball.position.y
+				this.position.z=ball.position.z
+				this.mesh.position=this.position
+			}
+			pyh=new Ball()
+			pyh.position.y=GAMEOFFSET
+			pyh.mesh.material.color={r:.25,g:.25,b:0}
+			pyh.update=function(){
+				this.position.x=ball.position.x
+				this.position.z=ball.position.z
+				this.mesh.position=this.position
+			}
+			nyh=new Ball()
+			nyh.position.y=-GAMEOFFSET
+			nyh.mesh.material.color={r:.25,g:.25,b:0}
+			nyh.update=function(){
+				this.position.x=ball.position.x
+				this.position.z=ball.position.z
+				this.mesh.position=this.position
+			}
+			pzh=new Ball()
+			pzh.position.z=GAMEOFFSET
+			pzh.mesh.material.color={r:.25,g:.25,b:0}
+			pzh.update=function(){
+				this.position.x=ball.position.x
+				this.position.y=ball.position.y
+				this.mesh.position=this.position
+			}
+			nzh=new Ball()
+			nzh.position.z=-GAMEOFFSET
+			nzh.mesh.material.color={r:.25,g:.25,b:0}
+			nzh.update=function(){
+				this.position.x=ball.position.x
+				this.position.y=ball.position.y
+				this.mesh.position=this.position
+			}
+		}
+
 		cake=true
 
 		function clip(x,lowbound,upbound)
@@ -395,15 +462,19 @@
 				return x
 			}
 		}
+		function scalify(x,lowbound,upbound)
+		{
+			return (((clip(x,lowbound,upbound)-lowbound)/((upbound-lowbound)/2)-1)*GAMEOFFSET)
+		}
 
 		leap.on('frame',function(handID, data){
 			//try{
-			if (data.hands.length>0 && data.hands[0].palm)
+			if (data.hands.length>0 && data.hands[0].fingers[0])
 			{
-				var pos=data.hands[0].palm.position
-				var z=(clip(pos[0],-100,100)/120)*GAMEOFFSET
-				var y=(((clip(pos[1],100,400)-100)/150-1)*GAMEOFFSET)
-				var x=-(clip(pos[2],-100,100)/120)*GAMEOFFSET
+				var pos=data.hands[0].fingers[0].tip.position
+				var z=-scalify(pos[0],-100,100)
+				var y=scalify(pos[1],000,300)
+				var x=scalify(pos[2],-100,0)
 				leappos={x:x,y:y,z:z}
 			}
 			//}
@@ -413,6 +484,7 @@
 			//}
 		})
 		function animate(){
+			document.getElementById("score").innerHTML="Score: "+score+"|--|Hi Score: "+hiscore
 			requestAnimationFrame(animate);
 			for (var i = 0; i < objlist.length; i++){
 				objlist[i].update()
